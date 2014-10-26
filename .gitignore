@@ -1,0 +1,5 @@
+
+## Ignore for installed NodeJS modules
+## ~ You can install them with npm install through package.json file
+node_modules/*
+

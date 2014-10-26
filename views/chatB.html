@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat room</title>
+  
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/foundation.min.css">
+  <link rel="stylesheet" href="css/chat.css">
+  
+  <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div class="column medium-4  large-3 full-height no-padding-h contacts">
+    <div class="panel">
+      <h3 class="title">Contacts</h3>
+    </div>
+    
+    <div id="online_users-list" class="online-users">
+      <h5>Now Online</h5>
+    </div>
+  </div>
+  
+  <div class="column medium-8 large-9 no-padding-h full-height conversation">
+    <div id="messages" class="msgs">
+      
+    </div>
+    
+    <div class="write-msg">
+      <br>
+      <textarea name="" id="new-msg" cols="" rows="" class="column small-12" placeholder="Write a message"></textarea>
+    </div>
+  </div>
+  
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/chatClient.js"></script>
+</body>
+</html>

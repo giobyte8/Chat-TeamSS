@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat room</title>
+</head>
+<body>
+  <h3>Messages:</h3>
+  <ul id="list-msgs">
+    
+  </ul>
+  <textarea id="new-msg" cols="30" rows="5" placeholder="New message"></textarea>
+  
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io(); // Inicializamos socketIO en el cliente
+    
+    /**
+     * Listener para el evento 'chat message'
+     *   Notese que es el mismo evento que se envia 
+     *   desde el servidor.
+     * Agregamos el mensage entrante a la lista.
+     */
+    socket.on('chat message', function (msg) {
+      $('#list-msgs').append( $('<li>').text(msg) );
+    });
+    
+    /**
+     * Emitimos un evento de tipo 'chat message' cada vez
+     * que se presiona 'Enter' en el textarea y enviamos
+     * su contenido como mensaje.
+     */
+    $('#new-msg').keyup(function (evt) {
+      if (evt.keyCode === 13) {
+        socket.emit('chat message', $('#new-msg').val());
+        $('#new-msg').val('');
+      }
+    });
+  </script>
+</body>
+</html>
