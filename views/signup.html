@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup to chat team SS</title>
+</head>
+<body>
+  <h1> Signup to chat team SS</h1>
+  <form id="signup-form">
+    <label for="username">Username</label><br>
+    <input id="username" name="username" placeholder="Choose an username" required>
+    
+    <br><br><label for="password">Password</label><br>
+    <input id="password" name="password" placeholder="Type a password" type="password" required>
+    
+    <br><br><label for="email">Email</label><br>
+    <input id="email" name="email" placeholder="User email" type="email" required>
+    
+    <br><br><button onclick="signup()" type="button">Signup</button>
+  </form>
+  <br><span id="msg"></span>
+  
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script type="text/javascript">
+    
+    /**
+     * Esta funcion se ejecuta al hacer clic en el boton 'Signup'
+     * registra mediante ajax al nuevo usuario
+     */
+    function signup() {
+      $.ajax({
+        type: "POST",
+        url: '/signup',
+        data: $('#signup-form').serialize(),
+        success: function (data) {
+          $('#msg').empty();
+          if (data.error) {
+            $('#msg').append(data.err.msg);
+          }
+          else {
+            $('#msg').append('User registered successfully');
+            $('#signup-form')[0].reset(); 
+          }
+        },
+        dataType: 'json'
+      });
+    }
+    
+  </script>
+</body>
+</html>
