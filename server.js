@@ -12,7 +12,7 @@ var bodyParser  = require('body-parser');
 var http        = require('http').Server(app);
 var io          = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
-var userDAO     = require('./dao/UserDAO').UserDAO;
+var userDAO     = require('./daos/UserDAO').UserDAO;
 
 /* MongoDB Configurations */
 var mdbconf = {
