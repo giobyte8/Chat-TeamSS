@@ -2,6 +2,7 @@
  * Server.js
  * @author : DiganmeGiovanni | https://twitter.com/DiganmeGiovanni
  * @Created on: 25 Oct, 2014
+ * Updated on: 29 March, 2015
  */
 
 
@@ -12,11 +13,12 @@ var bodyParser  = require('body-parser');
 var http        = require('http').Server(app);
 var io          = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
-var userDAO     = require('./daos/UserDAO').UserDAO;
+var userDAO     = require('./dao/UserDAO').UserDAO;
+var messageDAO  = require('./dao/MessageDAO').MessageDAO;
 
 /* MongoDB Configurations */
 var mdbconf = {
-  host: 'localhost',
+  host: '172.17.0.5',
   port: '27017',
   db: 'chatSS'
 };
@@ -25,6 +27,7 @@ var mdbconf = {
 MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, function (err, db) {
   
   var usersDAO = new userDAO(db); // Initialize userDAO
+  var messagesDAO = new messageDAO(db);
   var onlineUsers = [];
   
 /** *** *** ***
@@ -72,7 +75,7 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
     })
   });
   
-  /** css and js request */
+  /** css and js requests */
   app.get('/css/foundation.min.css', function (req, res) {
     res.sendFile(__dirname + '/views/css/foundation.min.css');
   });
@@ -84,6 +87,14 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
   app.get('/js/foundation.min.js', function (req, res) {
     res.sendFile(__dirname + '/views/js/foundation.min.js');
   });
+  
+  app.get('/js/chat.js', function (req, res) {
+    res.sendFile(__dirname + '/views/js/chat.js');
+  });
+  
+  app.get('/js/moment-with-locales.min.js', function (req, res) {
+    res.sendFile(__dirname + '/views/js/moment-with-locales.min.js')
+  })
   /** *** *** */
   
   app.get('*', function(req, res) {
@@ -116,7 +127,9 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
      *               través del socket.
      */
     socket.on('chat message', function(msg) {
-      io.emit('chat message', msg);
+      messagesDAO.addMessage(msg.username, Date.now(), msg.message, function (err, nmsg) {
+        io.emit('chat message', msg);
+      });
     });
     
     /**
@@ -127,6 +140,17 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
       onlineUsers.splice(onlineUsers.indexOf(socket.user), 1);
       io.emit('remove user', socket.user);
       console.log('User disconnected');
+    });
+    
+    /**
+     * Cada nuevo cliente solicita mediante este evento
+     * los ultimos mensajes registrados en el historial
+     */
+    socket.on('latest messages', function () {
+      messagesDAO.getLatest(50, function (err, messages) {
+        if (err) console.log('Error getting messages from history');
+        socket.emit('latest messages', messages);
+      });
     });
     
     /**
@@ -144,9 +168,9 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
 
 
   /**
-   * Iniciamos la aplicación en el puerto 3000
+   * Iniciamos la aplicación en el puerto 5000
    */
-  http.listen(3000, function() {
-    console.log('listening on *:3000');
+  http.listen(5000, function() {
+    console.log('listening on *:5000');
   });
 });
