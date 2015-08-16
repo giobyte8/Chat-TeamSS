@@ -2,49 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Signup to chat team SS</title>
+  
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/foundation.min.css">
 </head>
 <body>
-  <h1> Signup to chat team SS</h1>
-  <form id="signup-form">
-    <label for="username">Username</label><br>
-    <input id="username" name="username" placeholder="Choose an username" required>
-    
-    <br><br><label for="password">Password</label><br>
-    <input id="password" name="password" placeholder="Type a password" type="password" required>
-    
-    <br><br><label for="email">Email</label><br>
-    <input id="email" name="email" placeholder="User email" type="email" required>
-    
-    <br><br><button onclick="signup()" type="button">Signup</button>
-  </form>
-  <br><span id="msg"></span>
+
+  <br/><section class="large-offset-4 large-4 medium-offset-3 medium-6">
+    <div class="panel">
+      <div class="row">
+        <div class="small-12 text-center">
+          <h3>Signup to the chat</h3>
+          <br/>
+        </div>
+      </div>
+      
+      <form id="signup-form">
+      
+        <div id="alert-container" class="row hide">
+          <div class="small-12">
+            <div class="alert-box warning round">
+              <span id="msg" />
+            </div>
+          </div>
+        </div>
+      
+        <div class="row">
+          <div class="large-12">
+            <label>Username
+              <input id="username" name="username" type="text" placeholder="Choose an username" required/>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-12">
+            <label>Password
+              <input id="password" name="password" placeholder="Type a password" type="password" required/>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-12">
+            <label>Email
+              <input id="email" name="email" placeholder="User email" type="email" required/>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-12">
+            <button id="signupBtn" type="submit" class="right small">Signup</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-12">
+            <p class="text-center">
+              Yet have an account?, you can <a href="/">login here</a>
+            </p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
   
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="js/foundation.min.js"></script>
   <script type="text/javascript">
     
     /**
      * Esta funcion se ejecuta al hacer clic en el boton 'Signup'
      * registra mediante ajax al nuevo usuario
      */
-    function signup() {
+    $('#signupBtn').on('click', function (e) {
+      e.preventDefault()
+      
       $.ajax({
         type: "POST",
         url: '/signup',
         data: $('#signup-form').serialize(),
         success: function (data) {
           $('#msg').empty();
+          $('#alert-container').addClass('hide');
+          
           if (data.error) {
             $('#msg').append(data.err.msg);
+            $('#alert-container').removeClass('hide');
           }
           else {
             $('#msg').append('User registered successfully');
+            $('#alert-container').removeClass('hide');
             $('#signup-form')[0].reset(); 
           }
         },
         dataType: 'json'
       });
-    }
+    })
     
   </script>
 </body>

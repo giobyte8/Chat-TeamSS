@@ -45,13 +45,22 @@ function login() {
  */
 function appendMessage(msg) {
   var humanDate = moment(new Date(msg.date)).calendar();
-  var html = '<div class="small-11">' +
-          '<blockquote><h6>' + msg.username + ':</h6>' + 
-          msg.message +
-          '<cite>' + humanDate + '</cite></blockquote>' +
-          '</div>';
+  var html = '<div class="small-11 message">' +
+                '<blockquote>' +
+                  '<span class="message-title">' + msg.username +
+                  ':</span>' +
+                  '<cite class="right message-date show-for-medium-up">' + humanDate + '</cite>' +
+                  '<div class="message-body">' +
+                  msg.message +
+                  '</div>' +
+                '</blockquote>' +
+              '</div>';
              
-  $('#list-msgs').append( html );
+  var listmsgs = $('#list-msgs');
+  listmsgs.append( html );
+  
+  var sh = listmsgs[0].scrollHeight;
+  listmsgs.scrollTop(sh);
 }
 
 /**
@@ -71,8 +80,12 @@ function configureSocket(socket) {
     console.log(users.length + ' users received');
     for (var i=0; i<users.length; i++) 
     {
-      var htmluser = '<li id="' + users[i]._id + '">' + users[i]._id + '</li>';
-      $('#online-userslist').append(htmluser);
+      var userhtml = '<div class="' + users[i]._id + 
+                '" online-user">' + 
+                '<img src="img/nathan.png" class="user-image">' +
+                '<strong>&nbsp;&nbsp;' + users[i]._id + '</strong>'+
+                '</div>';
+      $('.online-userslist').append(userhtml);
     }
   });
   
@@ -104,8 +117,12 @@ function configureSocket(socket) {
    * @param  {[json]} nuser el usuario recien conectado
    */
   socket.on('new user', function (nuser) {
-    var linuser = '<li id="' + nuser._id + '">'+ nuser._id + '</li>';
-    $('#online-userslist').append(linuser);
+    var userhtml = '<div class="online-user ' + nuser._id +'">' + 
+                '<img src="img/nathan.png" class="user-image">' +
+                '<strong>&nbsp;&nbsp;' + nuser._id + '</strong>'+
+                '</div>';
+                
+    $('.online-userslist').append(userhtml);
   });
   
   /**
@@ -115,8 +132,8 @@ function configureSocket(socket) {
    * @param  {[json]} nuser El usuarios que se acaba de desconectar
    */
   socket.on('remove user', function (nuser) {
-    $('#' + nuser._id).remove();
-  })
+    $('.' + nuser._id).remove();
+  });
   
   /**
    * Emitimos un evento de tipo 'chat message' cada vez
@@ -141,15 +158,15 @@ function configureSocket(socket) {
   socket.emit('all online users');
   
   /**
-   * Solicitamos al servidor los ultimos mensajes
-   * del historial registrado.
-   */
-  socket.emit('latest messages');
-  
-  /**
    * Emitimos el evento 'new user' para que el servidor
    * informe a todos los usuarios que estamos en linea.
    */
   socket.emit('new user', user);
+  
+  /**
+   * Solicitamos al servidor los ultimos mensajes
+   * del historial registrado.
+   */
+  socket.emit('latest messages');
   
 }

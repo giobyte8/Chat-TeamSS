@@ -3,6 +3,8 @@
  * Data Access Object (DAO) para 'messages'
  * Debe ser construido con un objeto conectado a la
  * base de datos
+ *
+ * @Created on: 29 March, 2015
  */
 function MessageDAO(db) {
   

@@ -2,44 +2,54 @@
  * Server.js
  * @author : DiganmeGiovanni | https://twitter.com/DiganmeGiovanni
  * @Created on: 25 Oct, 2014
- * Updated on: 29 March, 2015
+ * Updated on: 15 Aug, 2015
  */
 
 
-/* Librerias necesarias para la aplicación */
+// ====================================================== //
+// == MODULOS REQUERIDOS PARA LA APLICACIÓN
+// ====================================================== //
 var express     = require('express');
 var app         = express();
 var bodyParser  = require('body-parser');
 var http        = require('http').Server(app);
 var io          = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
+
+
+// ====================================================== //
+// == MODULOS PROPIOS DE LA APLICACIÓN
+// ====================================================== //
 var userDAO     = require('./dao/UserDAO').UserDAO;
 var messageDAO  = require('./dao/MessageDAO').MessageDAO;
 
-/* MongoDB Configurations */
+
+// ====================================================== //
+// == MONGODB DATOS DE CONEXIÓN
+// ====================================================== //
 var mdbconf = {
-  host: '172.17.0.5',
+  host: process.env.MONGODB_PORT_27017_TCP_ADDR || '172.17.0.3',
   port: '27017',
   db: 'chatSS'
 };
 
-/* Get a mongodb connection and start application */
-MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, function (err, db) {
+// ====================================================== //
+// == INICIALIZA LA CONEXIÓN A MONGODB Y EL SERVIDOR
+// =====================================================  //
+var mongodbURL = 'mongodb://' + mdbconf.host + ':' + mdbconf.port + '/' + mdbconf.db;
+MongoClient.connect(mongodbURL, function (err, db) {
   
-  var usersDAO = new userDAO(db); // Initialize userDAO
+  var usersDAO = new userDAO(db);
   var messagesDAO = new messageDAO(db);
   var onlineUsers = [];
   
-/** *** *** ***
- * Configuramos la aplicación:
- */
+
   app.use(bodyParser()); // Para acceder a 'req.body' en peticiones POST
   
   
-/** *** *** ***
- *  Configuramos el sistema de ruteo para las peticiones web:
- */
-  
+// ====================================================== //
+// == CONFIGURACIÓN DE RUTAS
+// =====================================================  //
   app.get('/signup', function (req, res) {
     res.sendFile( __dirname + '/views/signup.html');
   });
@@ -75,7 +85,7 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
     })
   });
   
-  /** css and js requests */
+  /** css and js static routes */
   app.get('/css/foundation.min.css', function (req, res) {
     res.sendFile(__dirname + '/views/css/foundation.min.css');
   });
@@ -84,8 +94,16 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
     res.sendFile(__dirname + '/views/css/normalize.css');
   });
   
+  app.get('/css/chat.css', function (req, res) {
+    res.sendFile(__dirname + '/views/css/chat.css');
+  })
+  
   app.get('/js/foundation.min.js', function (req, res) {
     res.sendFile(__dirname + '/views/js/foundation.min.js');
+  });
+  
+  app.get('/js/foundation.offcanvas.js', function (req, res) {
+    res.sendFile(__dirname + '/views/js/foundation.offcanvas.js');
   });
   
   app.get('/js/chat.js', function (req, res) {
@@ -95,7 +113,10 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
   app.get('/js/moment-with-locales.min.js', function (req, res) {
     res.sendFile(__dirname + '/views/js/moment-with-locales.min.js')
   })
-  /** *** *** */
+  
+  app.get('/img/nathan.png', function (req, res) {
+    res.sendFile(__dirname + '/views/img/nathan.png');
+  })
   
   app.get('*', function(req, res) {
     res.sendFile( __dirname + '/views/chat.html');
@@ -128,7 +149,7 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
      */
     socket.on('chat message', function(msg) {
       messagesDAO.addMessage(msg.username, Date.now(), msg.message, function (err, nmsg) {
-        io.emit('chat message', msg);
+        io.emit('chat message', nmsg);
       });
     });
     
@@ -170,7 +191,7 @@ MongoClient.connect('mongodb://'+mdbconf.host+':'+mdbconf.port+'/'+mdbconf.db, f
   /**
    * Iniciamos la aplicación en el puerto 5000
    */
-  http.listen(5000, function() {
-    console.log('listening on *:5000');
+  http.listen(80, function() {
+    console.log('CHatSS App up and running ...');
   });
 });

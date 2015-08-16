@@ -2,39 +2,107 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chat room</title>
   
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/foundation.min.css">
+  <link rel="stylesheet" href="css/chat.css">
 </head>
 <body>
-  <h3>Connected users:</h3>
-  <a id="btn-login" href="#" data-reveal-id="login-modal">Login</a>
-  <ul id="online-userslist"></ul>
-  <div class="medium-8 medium-offset-2">
-    <h3>Mensajes:</h3>
-    <div id="list-msgs"></div>
-    <textarea id="new-msg" cols="30" rows="5" placeholder="New message"></textarea>
+  <div class="off-canvas-wrap height100" data-offcanvas>
+    <div class="inner-wrap height100">
+      
+      <nav class="tab-bar large-offset-1 large-10">
+        <section class="middle tab-bar-serction text-center">
+          <h1 class="title">Team SS Chat</h1>
+        </section>
+        <section class="right-small show-for-small-only">
+          <a href="#" class="right-off-canvas-toggle menu-icon">
+            <span></span>
+          </a>
+        </section>
+      </nav>
+      
+      <aside class="right-off-canvas-menu height100 online-users online-users-aside">
+        <br><h4>Online users:</h4>
+        <div class="online-userslist"></div>
+      </aside>
+      
+      <section class="main-section height100">
+        <div class="large-offset-1 large-10 height100">
+          
+          <div class="medium-4 columns hide-for-small-only height100 online-users">
+            <br><h4>Online users:</h4>
+            
+            <div class="online-userslist">
+            </div>
+            
+          </div>
+          
+          <div class="small-12 medium-8 columns 
+                  height100 messages">
+            <div id="list-msgs" class="height-messages">
+              
+            </div>
+            
+            <div class="height10">
+              <textarea id="new-msg" placeholder="New message"></textarea>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+      
+      <a href="#" class="exit-off-canvas"></a>
+      
+    </div>
   </div>
-  
+      
   <!-- Modal dialog for login -->
-  <div id="login-modal" class="reveal-modal" data-reveal>
-    <h2>Login</h2>
+  <div id="login-modal" class="reveal-modal small" data-reveal>
+    <h3>Login to chat room</h3>
     <div id="alerts"></div>
     <form id="login-form">
-      <label for="username">Username:</label>
-      <input name="username" type="text" placeholder="Username" required >
-      
-      <br><label>Password:</label>
-      <input name="password" type="password" placeholder="Password" required >
-      
-      <button onclick="login()" type="button">Login</button>
-      <br><span>Or <a href='/signup'>signup</a> if you dont have an account</span>
+      <div class="row">
+        <div class="small-12">
+          <label for="username">Username:</label>
+          <input name="username" type="text" placeholder="Username" required >    
+        </div>
+      </div>
+      <div class="row">
+        <div class="small-12">
+          <label>Password:</label>
+          <input name="password" type="password" placeholder="Password" required >
+        </div>
+      </div>
+      <div class="row">
+        <div class="small-12">
+          <button onclick="login()" type="button" class="button success small right">Login</button>    
+        </div>
+      </div>
+      <div class="row">
+        <div class="small-12">
+          <p class="text-center">
+            Or <a href='/signup'>signup</a> if you don't have an account
+          </p>
+        </div>
+      </div>
     </form>
+    <div class="panel text-center">
+      <h4>Chat system with Socket.IO</h4>
+      <p class="text-justify">
+        This chat system was created with learning purposes, you can find
+        all the documentation to create yours at
+        <a href="http://lineaporlinea.wordpress.com">my blog</a> or the source code
+        at <a href="http://github.com">Github.</a>
+      </p>
+    </div>
   </div>
   
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="js/foundation.min.js"></script>
+  <script src="js/foundation.offcanvas.js"></script>
   <script src="js/moment-with-locales.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/chat.js"></script>
