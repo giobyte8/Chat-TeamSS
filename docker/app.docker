@@ -1,0 +1,7 @@
+# Image used to run nodejs applications
+# with nodemon installed and dependencies from
+# package.json
+
+FROM node:10.15.3-stretch
+RUN mkdir /app && npm install -g nodemon
+WORKDIR /app
