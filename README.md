@@ -1,6 +1,6 @@
 Chat Team SS
 ============
-A real time chat built with with learning purposes
+A real time chat built with learning purposes
 
 ## Stack:
 - Node js
